@@ -98,6 +98,16 @@ Route::prefix('system/{system_type}')->where(['system_type' => '[a-zA-Z 0-9]+'])
     Route::get('/equipement_state/exportPDFHistory/{equipementsDt_id}', 'System\EquipementDtController@exportPDFHistory')->name('equipement_state.exportPDFHistory')->middleware('auth.isUser');
     Route::get('/rechange_and_conso/exportPDFHistory/{piece_id}', 'System\PieceController@exportPDFHistory')->name('rechange_and_conso.exportPDFHistory')->middleware('auth.isUser');
 
+    Route::get('/rechange_and_conso/exportPDFHistory/{piece_id}', 'System\PieceController@exportPDFHistory')->name('rechange_and_conso.exportPDFHistory')->middleware('auth.isUser');
+    
+    Route::get('/FileCSV/EquipmentDetailSpare', function () {
+        ob_clean();
+        return Storage::download('FileCSV\EquipmentDetailSpare.xlsx','EquipmentDetailSpare.xlsx');
+    })->middleware('auth.isUser');
+    Route::get('/FileCSV/EquipmentDetailOnline', function () {
+        ob_clean();
+        return Storage::download('/FileCSV/EquipmentDetailOnline.xlsx','EquipmentDetailOnline.xlsx');
+    })->middleware('auth.isUser');
 
     Route::get('/equipement_state/importCSV', 'System\EquipementDtController@importCSV')->name('equipement_state.importCSV')->middleware('auth.isUser');
     Route::post('/equipement_state/storeCSV', 'System\EquipementDtController@storeCSV')->name('equipement_state.storeCSV')->middleware('auth.isUser');

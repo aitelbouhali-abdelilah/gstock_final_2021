@@ -66,12 +66,12 @@
                 data-bs-target="#import-equipementstate-modal"
                 onclick="importEquipementState()">{{ __('messages.import file') }}</a>
             @if ($equiepemnt_status == 'ONLINE')
-                <a href="{{ asset('FileCSV\EquipmentDetailOnline.xlsx') }}" download> {{ __('messages.fileToFill') }}</a>
+                <a href="/FileCSV/EquipmentDetailOnline" download> {{ __('messages.fileToFill') }}</a>
                 <span class="text-info"> {{ __('messages.terminals To use in this file') }}:
                     {{ Auth::user()->getUserSiteTerminals($site)->pluck('name') }}
                 </span>
             @else
-                <a href="{{ asset('FileCSV\EquipmentDetailSpare.xlsx') }}" download> {{ __('messages.fileToFill') }}</a>
+                <a href="/FileCSV/EquipmentDetailSpare" download> {{ __('messages.fileToFill') }}</a>
             @endif
 
         @endisset
