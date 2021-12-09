@@ -87,6 +87,15 @@ Route::prefix('system/')->middleware(['auth'])->name('system.')->group(function 
     Route::get('equipement_dt/get-more-eqpts', 'System\EquipementDtController@getMoreEqpts')->name('equipement_state.get-more-eqpts')->middleware('auth.isUserOrViewer');
 
 });
+Route::get('/FileCSV/EquipmentDetailSpare', function () {
+    ob_clean();
+    return Storage::download('FileCSV\EquipmentDetailSpare.xlsx','EquipmentDetailSpare.xlsx');
+})->middleware('auth.isUser');
+Route::get('/FileCSV/EquipmentDetailOnline', function () {
+    ob_clean();
+    return Storage::download('/FileCSV/EquipmentDetailOnline.xlsx','EquipmentDetailOnline.xlsx');
+})->middleware('auth.isUser');
+
 Route::prefix('system/{system_type}')->where(['system_type' => '[a-zA-Z 0-9]+'])->middleware(['auth'])->name('system.')->group(function ($system_type) {
 
     Route::get('/equipement/exportPDF', 'System\EquipementController@exportPDF')->name('equipement.exportPDF')->middleware('auth.isUserOrViewer');
@@ -99,15 +108,6 @@ Route::prefix('system/{system_type}')->where(['system_type' => '[a-zA-Z 0-9]+'])
     Route::get('/rechange_and_conso/exportPDFHistory/{piece_id}', 'System\PieceController@exportPDFHistory')->name('rechange_and_conso.exportPDFHistory')->middleware('auth.isUser');
 
     Route::get('/rechange_and_conso/exportPDFHistory/{piece_id}', 'System\PieceController@exportPDFHistory')->name('rechange_and_conso.exportPDFHistory')->middleware('auth.isUser');
-    
-    Route::get('/FileCSV/EquipmentDetailSpare', function () {
-        ob_clean();
-        return Storage::download('FileCSV\EquipmentDetailSpare.xlsx','EquipmentDetailSpare.xlsx');
-    })->middleware('auth.isUser');
-    Route::get('/FileCSV/EquipmentDetailOnline', function () {
-        ob_clean();
-        return Storage::download('/FileCSV/EquipmentDetailOnline.xlsx','EquipmentDetailOnline.xlsx');
-    })->middleware('auth.isUser');
 
     Route::get('/equipement_state/importCSV', 'System\EquipementDtController@importCSV')->name('equipement_state.importCSV')->middleware('auth.isUser');
     Route::post('/equipement_state/storeCSV', 'System\EquipementDtController@storeCSV')->name('equipement_state.storeCSV')->middleware('auth.isUser');
