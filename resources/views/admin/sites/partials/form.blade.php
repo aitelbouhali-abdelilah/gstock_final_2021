@@ -82,11 +82,15 @@
                         }
                     }
                 </script> --}}
-                
             <input type="text" data-role="tagsinput" name="terminal"
-                class="form-control @error('terminal') is-invalid @enderror" aria-describedby="terminal" 
+                class="form-control @error('terminal') is-invalid @enderror @error('terminal.*') is-invalid @enderror" aria-describedby="terminal" 
                 value="@isset($terminal) @foreach ($terminal as $tr) ,{{ $tr->name }} @endforeach @else {{ old('terminal') }}@endisset">
                 @error('terminal')
+                    <span class="invalid-feedback" role="alert">
+                        {{ $message }}
+                    </span>
+                @enderror
+                @error('terminal.*')
                     <span class="invalid-feedback" role="alert">
                         {{ $message }}
                     </span>

@@ -71,26 +71,26 @@ class SiteController extends Controller
     public function store(Request $request)
     {
         $terminals = explode(',', $request->get('terminal'));
-        $request['terminal'] = $terminals;
-        Validator::make(array_merge($request->input(),['terminal'=>$terminals]), [
+        Validator::make(array_merge($request->all(),['terminal'=>$terminals]), [
             'nom' => [
                 'required', 'string', 'max:255',
                 'unique:sites,nom'
             ],
             'signifi' => ['required', 'string', 'max:255'],
-            "terminal.*"  => "required|string|distinct|min:1", //|unique:terminals,name
-            "terminal"  => "required|string",
+            "terminal"  => "required|array",
+            "terminal.*"  => "required|string|distinct|min:1",
         ])->validate();
+
         try {
             $site = Site::create([
                 'nom' => $request['nom'],
                 'signifi' => $request['signifi']
             ]);
     
-            for ($i = 0; $i < count($request['terminal']); $i++) {
+            for ($i = 0; $i < count($terminals); $i++) {
                 $terminal = Terminal::create([
                     'id_site' => $site->id,
-                    'name' => $request['terminal'][$i],
+                    'name' => $terminals[$i],
                 ]);
             }
     
@@ -133,34 +133,32 @@ class SiteController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $inputs = $request->except(['_token']);
+        $terminals=[];
         if($request->get('terminal')!=null){
         $terminals = explode(',', $request->get('terminal'));
-        $inputs['terminal'] = $terminals;
         }
-        Validator::make($inputs, [
+        Validator::make(array_merge($request->all(),['terminal'=>$terminals]), [
             'nom' => [
                 'required', 'string', 'max:255',
                 'unique:sites,nom,' . $id
             ],
             'signifi' => ['required', 'string', 'max:255'],
-            'terminal' => 'required|array',
-            "terminal.*"  => "required|string|distinct|min:1", //|unique:terminals,name
-            //"terminal"  => "required|string",
+            "terminal"  => "required|array",
+            "terminal.*"  => "required|string|distinct|min:1",
         ])->validate();
         try {
         
             $site = Site::findOrFail($id);
             $terminal = Terminal::where('id_site', '=', $site->id)->get();
-            for ($i = 0; $i < max(count($terminal), count($inputs['terminal'])); $i++) {
-                if (isset($terminal[$i]) && isset($inputs['terminal'][$i])) {
+            for ($i = 0; $i < max(count($terminal), count($terminals)); $i++) {
+                if (isset($terminal[$i]) && isset($terminals[$i])) {
                     $terminal[$i]->update([
-                        'name' => rtrim($inputs['terminal'][$i]),
+                        'name' => rtrim($terminals[$i]),
                     ]);
-                } else if (isset($inputs['terminal'][$i]) && !isset($terminal[$i])) {
+                } else if (isset($terminals[$i]) && !isset($terminal[$i])) {
                     Terminal::create([
                         'id_site' => $site->id,
-                        'name' => $inputs['terminal'][$i],
+                        'name' => $terminals[$i],
                     ]);
                 } else {
                     Terminal::destroy($terminal[$i]->id);

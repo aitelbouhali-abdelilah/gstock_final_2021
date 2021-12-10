@@ -53,7 +53,7 @@ class OccupationController extends Controller
     {
         $newOccupation = new UserOccupation();
         Validator::make($request->input(), [
-            'occupation' => ['required', 'string', 'max:255', 'e:uuniquser_occupations,occupation']
+            'occupation' => ['required', 'string', 'max:255', 'unique:user_occupations,occupation']
         ])->validated();
         try {
             $occupation = $newOccupation->create($request->only(['occupation']));
@@ -98,8 +98,9 @@ class OccupationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Validator::make($request->input(), [
-            'occupation' => ['required', 'integer', 'exists:user_occupations,id']
+        Validator::make(['occupation'=>$request->occupation, 'id_occupation'=>$id], [
+            'id_occupation' => ['required', 'integer', 'exists:user_occupations,id'],
+            'occupation' => ['required', 'string', 'unique:user_occupations,occupation,'.$id],
         ])->validated();
 
         try {
